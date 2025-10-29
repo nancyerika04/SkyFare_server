@@ -152,8 +152,13 @@ app.post("/billing-info", async(req, res)=>{
 
         }
         const sub = subscriptions.data[0]; 
+        console.log(sub);
         const planName = sub.items.data[0].price.nickname || "premium plan";
-        const nextBillingDate = new Date(sub.current_period_end*1000);
+        const nextBillingDate = (sub.current_period_end || sub.billing_cycle_anchor)
+        ? new Date((sub.current_period_end || sub.billing_cycle_anchor) * 1000)
+        .toLocaleDateString("en-US")
+        : null;
+        console.log(nextBillingDate);
 
         res.json({
             active : sub.status === "active", 
